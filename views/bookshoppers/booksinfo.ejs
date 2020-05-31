@@ -1,0 +1,58 @@
+<%- include("../partials/header") %>
+<div class="container Info">
+    <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+            <div class="thumbnail">
+                <img class="img-responsive" src="<%=books.image%>">
+                <div class="caption-full">
+                    <h4 id="price" class="pull-right"><span>&nbsp;&nbsp;</span><b>Rs <%=books.price%></b> 
+                        <% if(currentUser &&! books.author.id.equals(currentUser._id)){%>
+                        <div>
+                            <a  id="cart-button" class="btn btn-danger btn-md" href="/bookshopper/<%=books._id%>/cart" style="size:20px">Check Out</a>
+                           </div> 
+                           <%}%>
+                    </h4>
+                    
+                    <h1 style="color: rgb(23, 59, 8);"><b><%=books.name%></b></h1>
+                    <h4 style="color: rgb(22, 42, 88);"><b><em><%=books.bookauthor%></em></b></h4>
+                    <p style="color: rgb(16, 86, 81);"><%=books.description%></p>
+                    <p>
+                        <em><b>Submitted by: </b><%= books.author.username %>, <%= moment(books.createdAt).fromNow() %></em>
+                      </p>
+                    <% if(currentUser && books.author.id.equals(currentUser._id)){%>
+                    <a class="btn btn-warning" href="/bookshopper/<%=books._id%>/editbook">Edit</a>
+                    <%}%>
+                    <% if(currentUser && books.author.id.equals(currentUser._id)){%>
+                        <form id="delete-book" action="/bookshopper/<%=books._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    <%}%>
+                </div>
+            </div> 
+            <div class="well">
+                <div class="text-right">
+                    <p><a class="btn btn-info" href="/bookshopper/<%=books._id%>/comments/newcomment">Add New Comment</a></p>
+                </div>
+            <hr>
+                <% books.comments.forEach(function(comment){%>
+                <div class="row">
+                    <div class="col-md-8 col-sm-4">
+                        <strong><%= comment.author.username %></strong>
+                        <span class="pull-right"><%= moment(comment.createdAt).fromNow() %></span>
+                        <p><%=comment.text%></p>
+                        <% if(currentUser && comment.author.id.equals(currentUser._id)){%>
+                        <a class="btn btn-xs btn-warning" href="/bookshopper/<%=books._id%>/comments/<%=comment._id%>/edit">Edit</a>
+                        <form id="delete-comment" action="/bookshopper/<%=books._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                            <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                        </form>
+                        <%}%>            
+                        </div>
+                    </div>
+                <%});%>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("../partials/footer") %>
+

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Books Hopper</title>
+		<!-- Latest compiled and minified CSS -->		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <link rel="stylesheet" href="/stylesheets/cart.css">
+        <link rel="stylesheet" href="/stylesheets/main.css">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/fontawesome.min.js" rel="stylesheet">
+		<!-- Make site responsive on mobile/tablet -->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://kit.fontawesome.com/888c242dc0.js" crossorigin="anonymous"></script>
+		<script src="https://js.stripe.com/v3/"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-default">
+			<!-- Navbar content -->
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<div class="container">
+				  		<a class="navbar-brand" style="color:white;" href="#"><i class="fa fa-book fa-sm" aria-hidden="true"></i><span>&nbsp;&nbsp;</span>&nbsp;Books_Hopper</a>
+					</div>			
+				</div>
+			
+					  <ul class="nav navbar-nav navbar-right">
+						<% if(!currentUser){ %> 
+							<li class="nav-item"><a href="/register"style="color:white;">Sign Up  <i class="fas fa-user-plus fa-sm"></i></a></li>
+						  <% }else{ %>
+							<li class="nav-item"><div class="dropdown">
+								<button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" ><i class="far fa-user-circle fa-2x"style="color:white;"></i>						</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" href="#"><%=currentUser.username%></a>
+									<a class="dropdown-item" href="#"><%=currentUser.firstname%>&nbsp;<%=currentUser.lastname%></a>
+									<div class="divider"></div>
+									<a class="dropdown-item" href="/logout">Logout</a>
+							  </div>
+							  </div></li>
+						  <%}%>
+					  </ul>
+				
+			  </div>
+		  </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-8">
+            <hr class="c1">
+                <div class="text-center">
+                    <h1 id="mainheader">CHECK OUT</h1>
+                </div>
+                <hr class="c1">
+                <div class="row">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-10">
+                        <div class="thumbnail">
+							<hr>
+                            <div>
+                                <img id="img" class="img-responsive" src="<%=book.image%>">
+                            </div>
+							<hr>
+							<form action="/bookshopper/<%=book._id%>/cart" method="POST">
+                            <div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">
+									<div id="header"><b>Book ID:</b><span><%=book.id%></span></div>
+									<div id="header"><b>Book Name:</b><span><%=book.name%></span></div>
+                                    <div id="header"><b>Price:</b><span><%=book.price%></span></div>
+									<div id="header"><b>Book Owner:</b><span><%=book.author.username%></span></div>
+                                </div>
+                                <div class="col-lg-1"></div>	
+							</div>
+							<hr>
+							<div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">
+									<p class="text-center" style="font-size: 23px;font-weight: bolder;color: #6B6685;">Delivery Information</p>
+									<hr>
+									<div id="header"><b>Deliver to:-</b><span><%=currentUser.firstname%>&nbsp;<%=currentUser.lastname%></span></div>
+                                    <div id="header"><b>Address:- </b><span><%=currentUser.address%></span></div>
+								</div>
+								<div class="col-lg-1"></div>
+							</div>  
+							<hr>
+							<div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">     
+									<div><p><em><%=currentUser.firstname%>&nbsp;<%=currentUser.lastname%>, <%=book.name%> (<%=book.id%>) will be delivered to your address <%=currentUser.address%> before <%=moment().add(7, 'day').format("dddd DD MM YYYY")%>....</em></p></div>
+								</div>
+							</div>
+							<hr>
+							<input type="hidden" name="name" value="<%=book.name%>">
+							<input type="hidden" name="price" value="<%=book.price%>">
+							<div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">
+									<div class="text-center">
+										<button  class="btn btn-warning btn-lg"  style="size:20px">Pay <%=book.price%></button>
+									</div>
+								</div>
+							</div>
+						</form>
+							<hr>
+                        </div>
+                    </div>
+                </div>
+			</div>
+        </div>
+	</div>
+<%- include("../partials/footer") %>
